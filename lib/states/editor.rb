@@ -4,8 +4,12 @@ module FFMPEGTrimmer
       PLACEHOLDER_IMAGE = Gosu::Image.from_blob(128, 128, "\x00\x80\x00\xFF" * 128 * 128)
 
       def setup
+        theme(THEME)
+
         @file = @options[:filename]
         @duration = duration
+
+        window.caption = "FFMPEG Trimmer: #{@file}"
 
         generate_preview_frames
 
@@ -23,17 +27,24 @@ module FFMPEGTrimmer
           stack(width: 1.0, fill: true, padding: 2, margin_top: 8) do
             background 0xff_151515
 
-            title "File: #{File.basename(@file)}, Duration: #{format_duration(@duration)} (#{@duration}s)", width: 1.0
+            flow(width: 1.0, height: 36) do
+              button("Import Again") {  pop_state }
+
+              flow(fill: true)
+
+              path = "#{ROOT_PATH}/temp".gsub("/", "\\")
+              button("Open Folder") {  `explorer "#{path}"` }
+            end
 
             caption "Trim Start:", width: 1.0, text_align: :center
             flow(width: 1.0, height: 24, padding: 2) do
-              @trim_start_label = caption format_duration(0.0), width: 84
+              @trim_start_label = caption format_duration(0.0), width: 96
               @trim_start = slider fill: true, height: 1.0, range: 0..@duration, value: 0.0
             end
 
             caption "Trim End:", width: 1.0, text_align: :center, margin_top: 16
             flow(width: 1.0, height: 24, padding: 2) do
-              @trim_end_label = caption format_duration(@duration), width: 84
+              @trim_end_label = caption format_duration(@duration), width: 96
               @trim_end = slider fill: true, height: 1.0, range: 0..@duration, value: @duration
             end
 
@@ -132,7 +143,7 @@ module FFMPEGTrimmer
           img.style.width = max_width - 4
           img.style.height = (max_width.to_f / img.value.width) * img.value.height
 
-          max_height = img.height
+          max_height = img.height unless img.value == PLACEHOLDER_IMAGE
         end
 
         @frames_container.style.height = max_height

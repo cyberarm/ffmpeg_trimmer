@@ -2,6 +2,8 @@ module FFMPEGTrimmer
   class States
     class NoFFMPEG < CyberarmEngine::GuiState
       def setup
+        theme(THEME)
+
         stack(width: 1.0, height: 1.0, padding: 64) do
           background 0xff_252525
 

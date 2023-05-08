@@ -5,6 +5,7 @@ rescue LoadError
 end
 
 require_relative "lib/window"
+require_relative "lib/theme"
 require_relative "lib/states/no_ffmpeg"
 require_relative "lib/states/importer"
 require_relative "lib/states/editor"

@@ -2,6 +2,8 @@ module FFMPEGTrimmer
   class States
     class Renderer < CyberarmEngine::GuiState
       def setup
+        theme(THEME)
+
         @start_time = @options[:start_time]
         @clip_duration = @options[:clip_duration]
         @file = @options[:file].to_s
@@ -13,7 +15,14 @@ module FFMPEGTrimmer
         end
 
         @thread = Thread.new do
+          start_time = Gosu.milliseconds
           `ffmpeg.exe -y -ss #{@start_time} -t #{@clip_duration} -i "#{@file}" -c copy -map 0 "temp/trimmed_#{File.basename(@file)}"`
+
+          loop do
+            break if Gosu.milliseconds - start_time >= 500.0
+
+              sleep 0.1
+          end
 
           pop_state
         end
